@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Settings — Note Vault</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    .danger-zone {
+      background: rgba(239,68,68,0.04);
+      border: 1px solid rgba(239,68,68,0.15);
+      border-radius: var(--r-xl);
+      padding: 20px 24px;
+      margin-top: 24px;
+    }
+    .danger-zone-title { font-size:0.88rem;font-weight:700;color:var(--danger);margin-bottom:4px;font-family:var(--font-sans); }
+    .danger-zone-desc  { font-size:0.82rem;color:var(--text-subtle);margin-bottom:16px; }
+    .btn-danger-outline {
+      background: transparent;
+      border: 1.5px solid var(--danger);
+      color: var(--danger);
+      border-radius: var(--r-md);
+      font-family: var(--font-sans);
+      font-size: 0.85rem;
+      font-weight: 700;
+      padding: 9px 20px;
+      transition: all var(--t-base);
+      display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn-danger-outline:hover { background: var(--danger); color: #fff; }
+
+    .theme-preview-light { background: #F8FAFC; position:relative; }
+    .theme-preview-light::before { content:''; position:absolute; top:8px; left:8px; width:30px; height:30px; background:#fff; border-radius:4px; box-shadow:0 1px 4px rgba(0,0,0,0.1); }
+    .theme-preview-light::after  { content:''; position:absolute; top:8px; right:8px; width:30px; height:4px; background:#4F46E5; border-radius:2px; }
+    .theme-preview-dark  { background: #0F172A; position:relative; }
+    .theme-preview-dark::before  { content:''; position:absolute; top:8px; left:8px; width:30px; height:30px; background:#1E293B; border-radius:4px; }
+    .theme-preview-dark::after   { content:''; position:absolute; top:8px; right:8px; width:30px; height:4px; background:#6366F1; border-radius:2px; }
+    .theme-preview-system { background: linear-gradient(135deg, #F8FAFC 50%, #0F172A 50%); }
+
+    .settings-sidebar-tabs {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    @media (max-width:1024px) {
+      .settings-sidebar-tabs { flex-direction: row; flex-wrap: wrap; gap: 4px; }
+      .settings-layout { flex-direction: column !important; }
+    }
+  </style>
+</head>
+<body data-page="settings">
+
+  <div class="loading-overlay-v2" id="loaderOverlay"><div class="loader-ring"></div></div>
+  <div id="toastStack"></div>
+  <div class="sidebar-overlay-v2" id="sidebarOverlay"></div>
+
+  <div class="app-layout">
+
+    <!-- ═══════════════════════════════════════
+         SIDEBAR
+    ══════════════════════════════════════════ -->
+    <aside class="sidebar-v2" id="sidebar">
+      <div class="sidebar-header">
+        <a href="index.html" class="sidebar-logo-v2">
+          <div class="nav-logo-mark"><i class="fa-solid fa-book-bookmark"></i></div>
+          Note Vault
+        </a>
+      </div>
+
+      <nav class="sidebar-nav">
+        <div class="nav-section-label">Menu</div>
+        <a href="dashboard.html" class="nav-item-v2">
+          <i class="fa-solid fa-house nav-icon"></i> Dashboard
+        </a>
+        <a href="notes.html" class="nav-item-v2">
+          <i class="fa-solid fa-file-lines nav-icon"></i> Notes
+          <span class="nav-badge" id="notesBadge">0</span>
+        </a>
+
+        <div class="nav-section-label">Organize</div>
+        <a href="notes.html?category=all" class="nav-item-v2">
+          <i class="fa-solid fa-tags nav-icon"></i> Categories
+        </a>
+        <a href="notes.html?filter=archived" class="nav-item-v2">
+          <i class="fa-solid fa-box-archive nav-icon"></i> Archived
+        </a>
+        <a href="notes.html?filter=favorite" class="nav-item-v2">
+          <i class="fa-solid fa-star nav-icon"></i> Favorites
+        </a>
+        <a href="notes.html?filter=pinned" class="nav-item-v2">
+          <i class="fa-solid fa-thumbtack nav-icon"></i> Pinned
+        </a>
+
+        <div class="nav-section-label">Preferences</div>
+        <div class="nav-item-v2" style="cursor:default">
+          <i class="fa-solid fa-moon nav-icon"></i>
+          <span style="flex:1">Dark Mode</span>
+          <button class="theme-toggle" style="width:40px;height:22px" title="Toggle dark mode"></button>
+        </div>
+        <a href="settings.html" class="nav-item-v2 active">
+          <i class="fa-solid fa-gear nav-icon"></i> Settings
+        </a>
+        <button class="nav-item-v2" id="logoutBtn" data-logout style="width:100%;border:none">
+          <i class="fa-solid fa-right-from-bracket nav-icon"></i> Logout
+        </button>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="sidebar-user-card">
+          <div class="sidebar-avatar-v2" data-user-avatar>U</div>
+          <div style="min-width:0">
+            <div class="sidebar-user-name" data-user-name>Loading...</div>
+            <div class="sidebar-user-email" data-user-email style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- ═══════════════════════════════════════
+         MAIN
+    ══════════════════════════════════════════ -->
+    <main class="main-v2">
+
+      <!-- TOP BAR -->
+      <header class="topbar-v2">
+        <button class="topbar-burger" id="sidebarBurger"><i class="fa-solid fa-bars"></i></button>
+
+        <div class="topbar-search-wrap">
+          <i class="fa-solid fa-magnifying-glass topbar-search-icon"></i>
+          <input type="text" id="topbarSearch" class="topbar-search-input" placeholder="Search notes..." autocomplete="off" />
+          <div class="search-dropdown" id="searchDropdown"></div>
+        </div>
+
+        <div class="topbar-right">
+          <button class="theme-toggle" title="Toggle dark mode"></button>
+          <div class="notif-btn" onclick="Toast.info('Notifications','No new notifications.')">
+            <i class="fa-solid fa-bell"></i>
+          </div>
+          <div class="topbar-avatar" data-user-avatar>U</div>
+        </div>
+      </header>
+
+      <!-- PAGE -->
+      <div class="page-v2">
+
+        <div class="page-header-v2">
+          <div>
+            <h1 class="page-title-v2"><i class="fa-solid fa-gear" style="color:var(--primary);margin-right:8px"></i>Settings</h1>
+            <p class="page-subtitle-v2">Manage your account and preferences</p>
+          </div>
+        </div>
+
+        <div class="settings-layout d-flex gap-4 align-items-start">
+
+          <!-- Settings Nav Sidebar -->
+          <div class="settings-sidebar" style="min-width:200px;width:200px;flex-shrink:0">
+            <div class="settings-sidebar-tabs">
+              <div class="settings-nav-item active" data-panel="profilePanel">
+                <i class="fa-solid fa-user" style="width:16px;text-align:center"></i> Profile
+              </div>
+              <div class="settings-nav-item" data-panel="securityPanel">
+                <i class="fa-solid fa-lock" style="width:16px;text-align:center"></i> Security
+              </div>
+              <div class="settings-nav-item" data-panel="appearancePanel">
+                <i class="fa-solid fa-palette" style="width:16px;text-align:center"></i> Appearance
+              </div>
+              <div class="settings-nav-item" data-panel="notifPanel">
+                <i class="fa-solid fa-bell" style="width:16px;text-align:center"></i> Notifications
+              </div>
+            </div>
+          </div>
+
+          <!-- Settings Panels -->
+          <div class="settings-content flex-1" style="min-width:0">
+
+            <!-- ── PROFILE PANEL ── -->
+            <div class="settings-panel" id="profilePanel">
+              <div class="settings-panel-header">
+                <div class="settings-panel-title">👤 Profile Settings</div>
+                <div class="settings-panel-sub">Update your personal information and avatar</div>
+              </div>
+              <div class="settings-panel-body">
+
+                <!-- Avatar -->
+                <div class="settings-avatar-section">
+                  <div class="settings-avatar-big" id="settingsAvatarBig" onclick="Toast.info('Change Photo','Photo upload coming soon!')">
+                    <span id="settingsAvatarText">U</span>
+                    <div class="settings-avatar-edit"><i class="fa-solid fa-camera"></i></div>
+                  </div>
+                  <div>
+                    <div style="font-size:1rem;font-weight:700;color:var(--text);margin-bottom:4px" data-user-name>User</div>
+                    <div style="font-size:0.82rem;color:var(--text-muted);margin-bottom:10px" data-user-email></div>
+                    <button class="btn-ghost" style="font-size:0.8rem;padding:6px 14px" onclick="Toast.info('Change Photo','Photo upload coming soon!')">
+                      <i class="fa-solid fa-camera"></i> Change Photo
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Form Fields -->
+                <div class="row g-3">
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label-v2">Full Name</label>
+                      <div class="form-input-icon">
+                        <i class="fa-solid fa-user"></i>
+                        <input type="text" id="settingsName" class="form-input" placeholder="Your full name" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="form-group">
+                      <label class="form-label-v2">Email Address</label>
+                      <div class="form-input-icon">
+                        <i class="fa-solid fa-envelope"></i>
+                        <input type="email" id="settingsEmail" class="form-input" placeholder="you@example.com" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-12">
+                    <div class="form-group">
+                      <label class="form-label-v2">Bio <span style="color:var(--text-subtle);font-weight:400">(optional)</span></label>
+                      <textarea class="form-input" rows="3" placeholder="Tell us a little about yourself..." style="resize:vertical"></textarea>
+                    </div>
+                  </div>
+                </div>
+
+                <button class="btn-primary-v2 ripple-btn" id="saveProfileBtn">
+                  <i class="fa-solid fa-floppy-disk"></i> Save Changes
+                </button>
+              </div>
+            </div>
+
+            <!-- ── SECURITY PANEL ── -->
+            <div class="settings-panel" id="securityPanel" style="display:none">
+              <div class="settings-panel-header">
+                <div class="settings-panel-title">🔐 Security</div>
+                <div class="settings-panel-sub">Manage your password and account security</div>
+              </div>
+              <div class="settings-panel-body">
+
+                <div class="settings-row">
+                  <div class="settings-row-left">
+                    <div class="settings-row-label">Two-Factor Authentication</div>
+                    <div class="settings-row-desc">Add an extra layer of security to your account</div>
+                  </div>
+                  <button class="theme-toggle" onclick="Toast.info('2FA','Two-factor auth coming soon!')"></button>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-left">
+                    <div class="settings-row-label">Active Sessions</div>
+                    <div class="settings-row-desc">You are signed in on this device</div>
+                  </div>
+                  <button class="btn-ghost" style="font-size:0.82rem;padding:7px 14px" onclick="Toast.info('Sessions','Session management coming soon!')">
+                    <i class="fa-solid fa-shield"></i> View
+                  </button>
+                </div>
+
+                <!-- Change Password -->
+                <div style="margin-top:8px;padding-top:16px;border-top:1px solid var(--border)">
+                  <div style="font-size:0.9rem;font-weight:700;color:var(--text);margin-bottom:16px;font-family:var(--font-sans)">Change Password</div>
+                  <div class="row g-3">
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="form-label-v2">New Password</label>
+                        <div class="form-input-icon">
+                          <i class="fa-solid fa-lock"></i>
+                          <input type="password" id="newPw" class="form-input" placeholder="Min 8 characters" />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-6">
+                      <div class="form-group">
+                        <label class="form-label-v2">Confirm New Password</label>
+                        <div class="form-input-icon">
+                          <i class="fa-solid fa-lock"></i>
+                          <input type="password" id="confirmNewPw" class="form-input" placeholder="Repeat password" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <button class="btn-primary-v2 ripple-btn" id="changePwBtn">
+                    <i class="fa-solid fa-key"></i> Update Password
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── APPEARANCE PANEL ── -->
+            <div class="settings-panel" id="appearancePanel" style="display:none">
+              <div class="settings-panel-header">
+                <div class="settings-panel-title">🎨 Appearance</div>
+                <div class="settings-panel-sub">Customize the look and feel of your workspace</div>
+              </div>
+              <div class="settings-panel-body">
+
+                <div style="font-size:0.88rem;font-weight:600;color:var(--text);margin-bottom:14px;font-family:var(--font-sans)">Theme</div>
+                <div class="d-flex gap-4 mb-4">
+                  <div class="theme-option" data-theme="light">
+                    <div class="theme-preview theme-preview-light"></div>
+                    <div class="theme-label">Light</div>
+                  </div>
+                  <div class="theme-option" data-theme="dark">
+                    <div class="theme-preview theme-preview-dark"></div>
+                    <div class="theme-label">Dark</div>
+                  </div>
+                  <div class="theme-option" data-theme="light">
+                    <div class="theme-preview theme-preview-system"></div>
+                    <div class="theme-label">System</div>
+                  </div>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-left">
+                    <div class="settings-row-label">Compact View</div>
+                    <div class="settings-row-desc">Show more notes with reduced card padding</div>
+                  </div>
+                  <button class="theme-toggle" onclick="Toast.info('Compact View','This setting will be applied on the notes page.')"></button>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-left">
+                    <div class="settings-row-label">Font Size</div>
+                    <div class="settings-row-desc">Adjust the text size across the app</div>
+                  </div>
+                  <select class="form-select-v2" style="width:auto;min-width:100px">
+                    <option>Medium</option>
+                    <option>Small</option>
+                    <option>Large</option>
+                  </select>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-left">
+                    <div class="settings-row-label">Animations</div>
+                    <div class="settings-row-desc">Enable smooth UI transitions and micro-animations</div>
+                  </div>
+                  <button class="theme-toggle on" onclick="this.classList.toggle('on')"></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- ── NOTIFICATIONS PANEL ── -->
+            <div class="settings-panel" id="notifPanel" style="display:none">
+              <div class="settings-panel-header">
+                <div class="settings-panel-title">🔔 Notifications</div>
+                <div class="settings-panel-sub">Control which notifications you receive</div>
+              </div>
+              <div class="settings-panel-body">
+
+                <div class="settings-row">
+                  <div class="settings-row-left">
+                    <div class="settings-row-label">Email Notifications</div>
+                    <div class="settings-row-desc">Receive activity summaries and updates via email</div>
+                  </div>
+                  <button class="theme-toggle on" onclick="this.classList.toggle('on')"></button>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-left">
+                    <div class="settings-row-label">Push Notifications</div>
+                    <div class="settings-row-desc">Browser push alerts for reminders and activity</div>
+                  </div>
+                  <button class="theme-toggle" onclick="this.classList.toggle('on')"></button>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-left">
+                    <div class="settings-row-label">Weekly Summary</div>
+                    <div class="settings-row-desc">Get a weekly overview of your notes and productivity</div>
+                  </div>
+                  <button class="theme-toggle on" onclick="this.classList.toggle('on')"></button>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-left">
+                    <div class="settings-row-label">Note Reminders</div>
+                    <div class="settings-row-desc">Set reminders on important notes (coming soon)</div>
+                  </div>
+                  <button class="theme-toggle" onclick="this.classList.toggle('on')"></button>
+                </div>
+
+                <div class="settings-row">
+                  <div class="settings-row-left">
+                    <div class="settings-row-label">System Announcements</div>
+                    <div class="settings-row-desc">Feature updates and app announcements</div>
+                  </div>
+                  <button class="theme-toggle on" onclick="this.classList.toggle('on')"></button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="danger-zone">
+              <div class="danger-zone-title"><i class="fa-solid fa-triangle-exclamation"></i> Danger Zone</div>
+              <div class="danger-zone-desc">These actions are permanent and cannot be undone. Please proceed with caution.</div>
+              <div class="d-flex gap-3 flex-wrap">
+                <button class="btn-danger-outline" onclick="if(confirm('Clear all notes? This cannot be undone.')) { localStorage.removeItem('nv3_notes'); Toast.error('Cleared','All notes have been deleted.'); }">
+                  <i class="fa-solid fa-trash"></i> Clear All Notes
+                </button>
+                <button class="btn-danger-outline" onclick="if(confirm('Delete your account? All data will be lost.')) { NV.logout(); }">
+                  <i class="fa-solid fa-user-xmark"></i> Delete Account
+                </button>
+              </div>
+            </div>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="api.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

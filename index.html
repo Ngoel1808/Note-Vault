@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Note Vault — Capture Ideas. Organize Thoughts. Stay Productive.</title>
+  <meta name="description" content="Note Vault is a modern, premium note-taking app inspired by Notion and Linear. Secure, fast, and beautiful." />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+
+  <style>
+    .hero-section-bg { background: var(--gradient-hero); }
+    .features-bg { background: var(--bg); }
+    .steps-bg { background: var(--bg-subtle); }
+    [data-theme="dark"] .steps-bg { background: var(--bg-elevated); }
+    .testi-bg { background: var(--bg); }
+    .cta-bg {
+      background: linear-gradient(135deg, #1E1B4B 0%, #312E81 50%, #0C4A6E 100%);
+      padding: 100px 0;
+      position: relative;
+      overflow: hidden;
+    }
+    .cta-bg::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(at 30% 50%, rgba(139,92,246,0.3) 0%, transparent 60%),
+                  radial-gradient(at 70% 50%, rgba(6,182,212,0.2) 0%, transparent 60%);
+    }
+    .step-number {
+      width: 52px; height: 52px;
+      background: var(--gradient-primary);
+      border-radius: 14px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; font-weight: 800; color: #fff;
+      margin: 0 auto 18px;
+      box-shadow: 0 6px 18px rgba(79,70,229,0.35);
+      font-family: var(--font-sans);
+    }
+    .step-card {
+      background: var(--bg-elevated);
+      border: 1px solid var(--border);
+      border-radius: var(--r-xl);
+      padding: 28px 20px;
+      text-align: center;
+      transition: all var(--t-base);
+      height: 100%;
+    }
+    .step-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+    .step-h { font-size: 1rem; font-weight: 700; color: var(--text); margin-bottom: 8px; font-family: var(--font-sans); }
+    .step-p { font-size: 0.85rem; color: var(--text-muted); line-height: 1.6; }
+  </style>
+</head>
+<body data-page="landing">
+
+  <!-- Loading Overlay -->
+  <div class="loading-overlay-v2" id="loaderOverlay"><div class="loader-ring"></div></div>
+  <!-- Toast Stack -->
+  <div id="toastStack"></div>
+
+  <!-- ═══════════════════════════════════════
+       NAVBAR
+  ══════════════════════════════════════════ -->
+  <nav class="landing-nav" id="landingNav">
+    <div class="nav-inner">
+      <!-- Logo -->
+      <a href="index.html" class="nav-logo">
+        <div class="nav-logo-mark"><i class="fa-solid fa-book-bookmark"></i></div>
+        Note Vault
+      </a>
+
+      <!-- Desktop Links -->
+      <ul class="nav-links d-none d-lg-flex">
+        <li><a href="#features">Features</a></li>
+        <li><a href="#how-it-works">How it Works</a></li>
+        <li><a href="#about">About</a></li>
+      </ul>
+
+      <!-- Actions -->
+      <div class="nav-actions">
+        <button class="theme-toggle" id="navThemeToggle" title="Toggle dark mode" aria-label="Toggle dark mode"></button>
+        <a href="auth.html" class="nav-link-btn d-none d-md-inline">Sign In</a>
+        <a href="auth.html?tab=register" class="nav-cta">Get Started</a>
+        <!-- Mobile Burger -->
+        <button class="nav-burger icon-btn d-lg-none" id="navBurger" style="border:1.5px solid rgba(255,255,255,0.3);background:rgba(255,255,255,0.1);color:white">
+          <i class="fa-solid fa-bars"></i>
+        </button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- ═══════════════════════════════════════
+       HERO SECTION
+  ══════════════════════════════════════════ -->
+  <section class="hero hero-section-bg" id="home">
+    <div class="hero-blob hero-blob-1"></div>
+    <div class="hero-blob hero-blob-2"></div>
+    <div class="hero-blob hero-blob-3"></div>
+    <div class="hero-grid-bg"></div>
+
+    <div class="container hero-content" style="max-width:1280px">
+      <div class="row align-items-center g-5">
+
+        <!-- Left -->
+        <div class="col-lg-6">
+          <div class="hero-badge">
+            <div class="hero-badge-dot"></div>
+            Now with AI Summarization ✨
+          </div>
+          <h1 class="hero-headline">
+            Capture Ideas.<br>
+            <span class="accent-word">Organize Thoughts.</span><br>
+            Stay Productive.
+          </h1>
+          <p class="hero-sub">
+            Note Vault is your premium digital workspace — beautifully designed,
+            lightning-fast, and secure. Capture anything, find everything, stay in flow.
+          </p>
+          <div class="hero-cta-group">
+            <a href="auth.html?tab=register" class="hero-cta-primary ripple-btn">
+              <i class="fa-solid fa-rocket"></i> Get Started Free
+            </a>
+            <a href="#features" class="hero-cta-outline">
+              <i class="fa-solid fa-play-circle"></i> Learn More
+            </a>
+          </div>
+
+        </div>
+
+        <!-- Right: Floating note cards -->
+        <div class="col-lg-6 d-none d-lg-block hero-visual">
+          <div class="floating-cards-wrap">
+            <!-- Card 1 -->
+            <div class="float-card" style="top:10px;left:50%;transform:translateX(-50%);width:270px">
+              <div class="float-card-tag" style="background:rgba(79,70,229,0.2);color:#818CF8">💼 Work</div>
+              <div class="float-card-title">Q3 Product Roadmap</div>
+              <div class="float-card-text">Launch new dashboard, implement real-time collaboration, ship mobile beta by end of quarter...</div>
+              <div style="margin-top:12px;display:flex;gap:6px">
+                <span style="width:8px;height:8px;border-radius:50%;background:#22C55E"></span>
+                <span style="font-size:0.72rem;color:rgba(255,255,255,0.4)">Updated 2h ago</span>
+              </div>
+            </div>
+
+            <!-- Card 2 -->
+            <div class="float-card" style="bottom:80px;left:10px;width:220px">
+              <div class="float-card-tag" style="background:rgba(245,158,11,0.2);color:#FCD34D">💡 Ideas</div>
+              <div class="float-card-title">App Feature Ideas</div>
+              <div class="float-card-text">Voice-to-note, AI summaries, collaborative editing, smart tags...</div>
+            </div>
+
+            <!-- Card 3 -->
+            <div class="float-card" style="top:40px;right:0;width:200px">
+              <div class="float-card-tag" style="background:rgba(6,182,212,0.2);color:#67E8F9">👤 Personal</div>
+              <div class="float-card-title">Weekly Goals</div>
+              <div class="float-card-text">Read 30 pages, work out 3x, finish side project chapter...</div>
+            </div>
+
+            <!-- Card 4 -->
+            <div class="float-card" style="bottom:10px;right:30px;width:185px">
+              <div class="float-card-tag" style="background:rgba(34,197,94,0.2);color:#6EE7B7">📚 Study</div>
+              <div class="float-card-title">JS Design Patterns</div>
+              <div class="float-card-text">Module, Observer, Factory, Singleton...</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FEATURES
+  ══════════════════════════════════════════ -->
+  <section class="section features-bg" id="features">
+    <div class="container" style="max-width:1200px">
+      <div class="text-center mb-5 observe-anim">
+        <div class="section-tag"><i class="fa-solid fa-star"></i> Features</div>
+        <h2 class="section-title mt-2">Everything you need to <span class="gradient-text">stay organized</span></h2>
+        <p class="section-sub mx-auto">Powerful features crafted for simplicity. Note Vault gives you the tools to capture, organize, and retrieve your ideas effortlessly.</p>
+      </div>
+
+      <div class="row g-4 stagger">
+        <div class="col-lg-4 col-md-6 observe-anim">
+          <div class="feature-card">
+            <div class="feature-icon-wrap" style="background:linear-gradient(135deg,rgba(79,70,229,0.12),rgba(79,70,229,0.04))">
+              <span style="font-size:1.5rem">🔐</span>
+            </div>
+            <div class="feature-h">Secure Storage</div>
+            <p class="feature-p">Your notes are stored locally with no third-party access. Your thoughts stay completely private, always.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 observe-anim">
+          <div class="feature-card">
+            <div class="feature-icon-wrap" style="background:linear-gradient(135deg,rgba(6,182,212,0.12),rgba(6,182,212,0.04))">
+              <span style="font-size:1.5rem">⚡</span>
+            </div>
+            <div class="feature-h">Instant Search</div>
+            <p class="feature-p">Find any note in milliseconds with real-time full-text search across titles, content, tags, and categories.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 observe-anim">
+          <div class="feature-card">
+            <div class="feature-icon-wrap" style="background:linear-gradient(135deg,rgba(245,158,11,0.12),rgba(245,158,11,0.04))">
+              <span style="font-size:1.5rem">🏷️</span>
+            </div>
+            <div class="feature-h">Smart Categories</div>
+            <p class="feature-p">Organize with Work, Personal, Ideas, and Study categories. Filter by priority to focus on what matters.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 observe-anim">
+          <div class="feature-card">
+            <div class="feature-icon-wrap" style="background:linear-gradient(135deg,rgba(34,197,94,0.12),rgba(34,197,94,0.04))">
+              <span style="font-size:1.5rem">📦</span>
+            </div>
+            <div class="feature-h">Archive System</div>
+            <p class="feature-p">Keep your workspace clean by archiving old notes. Restore anytime — nothing is ever permanently lost.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 observe-anim">
+          <div class="feature-card">
+            <div class="feature-icon-wrap" style="background:linear-gradient(135deg,rgba(139,92,246,0.12),rgba(139,92,246,0.04))">
+              <span style="font-size:1.5rem">⭐</span>
+            </div>
+            <div class="feature-h">Favorites & Pins</div>
+            <p class="feature-p">Star your most important notes and pin them to the top. Your priorities always within reach.</p>
+          </div>
+        </div>
+        <div class="col-lg-4 col-md-6 observe-anim">
+          <div class="feature-card">
+            <div class="feature-icon-wrap" style="background:linear-gradient(135deg,rgba(15,23,42,0.08),rgba(15,23,42,0.02))">
+              <span style="font-size:1.5rem">🌙</span>
+            </div>
+            <div class="feature-h">Dark Mode</div>
+            <p class="feature-p">Easy on the eyes. Switch between light and dark themes instantly. Your preference is always remembered.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       HOW IT WORKS
+  ══════════════════════════════════════════ -->
+  <section class="section steps-bg" id="how-it-works">
+    <div class="container" style="max-width:1100px">
+      <div class="text-center mb-5 observe-anim">
+        <div class="section-tag"><i class="fa-solid fa-list-ol"></i> How it Works</div>
+        <h2 class="section-title mt-2">Simple, fast, <span class="gradient-text">powerful</span></h2>
+        <p class="section-sub mx-auto">Get started in seconds and build a habit of capturing your best ideas every day.</p>
+      </div>
+      <div class="row g-4 stagger">
+        <div class="col-lg-3 col-md-6 observe-anim">
+          <div class="step-card">
+            <div class="step-number">1</div>
+            <div class="step-h">Create Account</div>
+            <p class="step-p">Sign up in seconds. No credit card. No hidden fees. Just your ideas.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 observe-anim">
+          <div class="step-card">
+            <div class="step-number">2</div>
+            <div class="step-h">Write Notes</div>
+            <p class="step-p">Use the rich editor to capture ideas with formatting, tags, and priority levels.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 observe-anim">
+          <div class="step-card">
+            <div class="step-number">3</div>
+            <div class="step-h">Organize</div>
+            <p class="step-p">Categorize, pin, and archive. Use filters and search to keep everything tidy.</p>
+          </div>
+        </div>
+        <div class="col-lg-3 col-md-6 observe-anim">
+          <div class="step-card">
+            <div class="step-number">4</div>
+            <div class="step-h">Stay Productive</div>
+            <p class="step-p">Your personal dashboard tracks activity and gives you instant access to recent notes.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+
+  <!-- ═══════════════════════════════════════
+       ABOUT
+  ══════════════════════════════════════════ -->
+  <section class="section steps-bg" id="about">
+    <div class="container" style="max-width:1100px">
+      <div class="row align-items-center g-5">
+        <div class="col-lg-6 observe-anim">
+          <div class="section-tag"><i class="fa-solid fa-info-circle"></i> About</div>
+          <h2 class="section-title mt-2">Built for <span class="gradient-text">real productivity</span></h2>
+          <p style="color:var(--text-muted);font-size:0.95rem;line-height:1.8;margin-bottom:16px">Note Vault was born from frustration with bloated note apps. We wanted something that felt premium, stayed fast, and got out of the way while you think.</p>
+          <p style="color:var(--text-muted);font-size:0.95rem;line-height:1.8;margin-bottom:24px">Everything is stored locally — your data never leaves your device. No subscriptions, no tracking, no compromise.</p>
+
+        </div>
+        <div class="col-lg-6 observe-anim">
+          <div class="card-elevated p-4">
+            <div style="font-size:2.5rem;margin-bottom:14px">🗂️</div>
+            <h4 style="font-weight:800;font-family:var(--font-sans);margin-bottom:10px;color:var(--text)">Your data, your control</h4>
+            <p style="color:var(--text-muted);font-size:0.9rem;margin-bottom:16px">All notes stay in your browser. No servers, no accounts required to get started, no privacy concerns.</p>
+            <ul class="list-unstyled" style="display:flex;flex-direction:column;gap:10px">
+              <li style="display:flex;gap:10px;align-items:center;font-size:0.88rem;color:var(--text-muted)"><span style="color:var(--success);font-size:1rem">✅</span> Zero third-party data sharing</li>
+              <li style="display:flex;gap:10px;align-items:center;font-size:0.88rem;color:var(--text-muted)"><span style="color:var(--success);font-size:1rem">✅</span> Works offline, always available</li>
+              <li style="display:flex;gap:10px;align-items:center;font-size:0.88rem;color:var(--text-muted)"><span style="color:var(--success);font-size:1rem">✅</span> No ads, no tracking, no nonsense</li>
+              <li style="display:flex;gap:10px;align-items:center;font-size:0.88rem;color:var(--text-muted)"><span style="color:var(--success);font-size:1rem">✅</span> Completely free forever</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       CTA BANNER
+  ══════════════════════════════════════════ -->
+  <section class="cta-bg">
+    <div class="container text-center position-relative" style="z-index:2;max-width:700px">
+      <h2 style="font-size:clamp(2rem,4vw,3rem);font-weight:900;color:#fff;margin-bottom:16px;font-family:var(--font-sans);letter-spacing:-1px">
+        Ready to organize your<br><span style="background:linear-gradient(135deg,#A78BFA,#67E8F9);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text">digital life?</span>
+      </h2>
+      <p style="color:rgba(255,255,255,0.7);font-size:1.05rem;margin-bottom:36px">Join thousands of creators who trust Note Vault every single day.</p>
+      <div class="d-flex justify-content-center gap-3 flex-wrap">
+        <a href="auth.html?tab=register" class="hero-cta-primary ripple-btn"><i class="fa-solid fa-rocket"></i> Start for Free</a>
+        <a href="auth.html" class="hero-cta-outline">Sign In →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- ═══════════════════════════════════════
+       FOOTER
+  ══════════════════════════════════════════ -->
+  <footer class="landing-footer">
+    <div class="container" style="max-width:1200px">
+      <div class="row g-4 pb-4">
+        <div class="col-lg-4 col-md-6">
+          <div class="footer-logo"><div class="nav-logo-mark" style="width:28px;height:28px;font-size:0.8rem"><i class="fa-solid fa-book-bookmark"></i></div> Note Vault</div>
+          <p class="footer-desc">Your premium digital note companion. Built for modern creators who value privacy, speed, and beautiful design.</p>
+          <div class="social-icons">
+            <a href="#" class="social-icon"><i class="fa-brands fa-x-twitter"></i></a>
+            <a href="#" class="social-icon"><i class="fa-brands fa-github"></i></a>
+            <a href="#" class="social-icon"><i class="fa-brands fa-linkedin-in"></i></a>
+            <a href="#" class="social-icon"><i class="fa-brands fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="col-lg-2 col-md-3 col-6">
+          <div class="footer-heading">Product</div>
+          <ul class="footer-links">
+            <li><a href="#features">Features</a></li>
+            <li><a href="#how-it-works">How it Works</a></li>
+            <li><a href="#">Changelog</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-3 col-6">
+          <div class="footer-heading">Company</div>
+          <ul class="footer-links">
+            <li><a href="#about">About</a></li>
+            <li><a href="#">Blog</a></li>
+            <li><a href="#">Careers</a></li>
+            <li><a href="#">Contact</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-3 col-6">
+          <div class="footer-heading">Legal</div>
+          <ul class="footer-links">
+            <li><a href="#">Privacy Policy</a></li>
+            <li><a href="#">Terms of Service</a></li>
+            <li><a href="#">Cookie Policy</a></li>
+          </ul>
+        </div>
+        <div class="col-lg-2 col-md-3 col-6">
+          <div class="footer-heading">Account</div>
+          <ul class="footer-links">
+            <li><a href="auth.html">Sign In</a></li>
+            <li><a href="auth.html?tab=register">Register</a></li>
+            <li><a href="dashboard.html">Dashboard</a></li>
+            <li><a href="settings.html">Settings</a></li>
+          </ul>
+        </div>
+      </div>
+      <hr class="footer-divider" />
+      <div class="d-flex justify-content-between align-items-center flex-wrap gap-3">
+        <p class="footer-copy mb-0">© 2024 Note Vault. All rights reserved. Made with ❤️</p>
+        <button class="theme-toggle" style="opacity:0.5" title="Toggle theme"></button>
+      </div>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

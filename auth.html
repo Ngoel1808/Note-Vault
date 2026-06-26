@@ -1,0 +1,387 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Sign In — Note Vault</title>
+  <meta name="description" content="Sign in or create a free Note Vault account to start capturing your ideas." />
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <!-- Google Identity Services -->
+  <script src="https://accounts.google.com/gsi/client" async defer></script>
+
+  <style>
+    body { overflow: hidden; }
+    @media (max-width:991px) { body { overflow: auto; } }
+    .auth-page { height: 100vh; overflow: hidden; }
+    @media (max-width:991px) { .auth-page { height:auto; min-height:100vh; } }
+
+    .auth-btn {
+      width: 100%;
+      background: var(--gradient-primary);
+      border: none;
+      border-radius: var(--r-md);
+      color: #fff;
+      font-family: var(--font-sans);
+      font-size: 0.95rem;
+      font-weight: 700;
+      padding: 13px;
+      transition: all var(--t-base);
+      box-shadow: 0 4px 14px rgba(79,70,229,0.35);
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      margin-top: 4px;
+    }
+    .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(79,70,229,0.45); }
+    .auth-btn:disabled { opacity: 0.7; transform: none; }
+
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      font-size: 0.82rem; font-weight: 600; color: var(--text-muted);
+      margin-bottom: 24px; transition: color var(--t-fast);
+    }
+    .back-link:hover { color: var(--primary); }
+    .auth-footer-link { font-size: 0.85rem; color: var(--text-muted); text-align: center; margin-top: 16px; }
+    .auth-footer-link a { font-weight: 700; color: var(--primary); }
+
+    /* Mini note preview cards in left panel */
+    .auth-preview-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,0.06);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: var(--r-lg);
+      margin-bottom: 10px;
+    }
+    .apc-icon { width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1rem;flex-shrink:0; }
+    .apc-title { font-size:0.85rem;font-weight:600;color:rgba(255,255,255,0.9); }
+    .apc-meta  { font-size:0.73rem;color:rgba(255,255,255,0.45);margin-top:1px; }
+
+    .pw-bars { display:flex;gap:4px;height:4px;margin-bottom:6px; }
+    .pw-bar  { flex:1;border-radius:var(--r-full);background:var(--bg-muted);transition:background var(--t-base); }
+  </style>
+</head>
+<body data-page="auth">
+
+  <div class="loading-overlay-v2" id="loaderOverlay"><div class="loader-ring"></div></div>
+  <div id="toastStack"></div>
+
+  <div class="auth-page">
+
+    <!-- ═══ LEFT SIDE ═══ -->
+    <div class="auth-left">
+      <!-- Blobs -->
+      <div class="auth-left-blob auth-left-blob-1"></div>
+      <div class="auth-left-blob auth-left-blob-2"></div>
+
+      <!-- Content -->
+      <div class="auth-left-content">
+        <a href="index.html" class="auth-left-logo">
+          <div class="nav-logo-mark"><i class="fa-solid fa-book-bookmark"></i></div>
+          Note Vault
+        </a>
+
+        <div style="animation:fadeInUp 0.6s var(--ease-out) 0.1s both">
+          <h2 class="auth-headline">
+            Your ideas deserve<br>
+            <span>a better home.</span>
+          </h2>
+          <p class="auth-sub">
+            Capture, organize, and retrieve your notes with a beautiful and secure digital workspace designed for modern creators.
+          </p>
+        </div>
+
+        <div class="auth-features" style="animation:fadeInUp 0.6s var(--ease-out) 0.2s both">
+          <div class="auth-feature-item">
+            <div class="auth-feature-icon">🔐</div>
+            <span>Bank-grade Privacy — data stays on your device</span>
+          </div>
+          <div class="auth-feature-item">
+            <div class="auth-feature-icon">⚡</div>
+            <span>Lightning Fast Search across all your notes</span>
+          </div>
+          <div class="auth-feature-item">
+            <div class="auth-feature-icon">🗂️</div>
+            <span>Smart Organization with categories and tags</span>
+          </div>
+          <div class="auth-feature-item">
+            <div class="auth-feature-icon">🌙</div>
+            <span>Beautiful Dark Mode, always available</span>
+          </div>
+        </div>
+
+        <!-- Floating note previews -->
+        <div style="margin-top:36px;animation:fadeInUp 0.6s var(--ease-out) 0.3s both">
+          <div class="auth-preview-card">
+            <div class="apc-icon" style="background:rgba(79,70,229,0.25)">💼</div>
+            <div>
+              <div class="apc-title">Project Kickoff Notes</div>
+              <div class="apc-meta">Work · Updated just now</div>
+            </div>
+          </div>
+          <div class="auth-preview-card" style="animation-delay:2s">
+            <div class="apc-icon" style="background:rgba(245,158,11,0.25)">💡</div>
+            <div>
+              <div class="apc-title">Weekend Project Ideas</div>
+              <div class="apc-meta">Ideas · Updated 1h ago</div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="auth-left-footer">
+        © 2024 Note Vault — All rights reserved.
+      </div>
+    </div>
+
+    <!-- ═══ RIGHT SIDE ═══ -->
+    <div class="auth-right">
+      <div class="auth-card-v2">
+
+        <!-- Back link -->
+        <a href="index.html" class="back-link">
+          <i class="fa-solid fa-arrow-left"></i> Back to home
+        </a>
+
+        <!-- Tab group -->
+        <div class="auth-tab-group">
+          <button class="auth-tab active" data-form="loginForm">Sign In</button>
+          <button class="auth-tab" data-form="registerForm">Create Account</button>
+        </div>
+
+        <!-- ══ LOGIN FORM ══ -->
+        <div class="auth-form active" id="loginForm">
+          <h2 class="auth-title-v2">Welcome back 👋</h2>
+          <p class="auth-sub-v2">Sign in to continue to your workspace.</p>
+
+          <!-- Google Sign-In (rendered by GIS) -->
+          <div id="googleLoginBtn" style="width:100%;margin-bottom:10px;display:flex;justify-content:center"></div>
+
+          <!-- GitHub Sign-In -->
+          <button class="social-login-btn" type="button" id="githubLoginBtn" onclick="AuthAPI.loginWithGitHub()">
+            <i class="fa-brands fa-github"></i> Continue with GitHub
+          </button>
+
+          <div class="auth-divider-v2">or continue with email</div>
+
+          <form id="loginFormEl" novalidate>
+            <!-- Email -->
+            <div class="form-group">
+              <label class="form-label-v2" for="loginEmail">Email Address</label>
+              <div class="form-input-icon">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="loginEmail" class="form-input" placeholder="you@example.com" autocomplete="email" />
+              </div>
+              <div class="form-error" id="loginEmailErr"></div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              <div class="d-flex justify-content-between align-items-center mb-1">
+                <label class="form-label-v2" for="loginPw" style="margin-bottom:0">Password</label>
+                <a href="#" class="forgot-link" onclick="Toast.info('Reset Link Sent','Check your email. (Demo only)')">Forgot password?</a>
+              </div>
+              <div class="form-input-icon">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="loginPw" class="form-input" placeholder="Enter your password" autocomplete="current-password" />
+                <button type="button" class="right-icon" data-toggle-pw="loginPw" style="background:none;border:none;cursor:pointer;padding:0" title="Show/hide password">
+                  <i class="fa-regular fa-eye" style="color:var(--text-subtle)"></i>
+                </button>
+              </div>
+              <div class="form-error" id="loginPwErr"></div>
+            </div>
+
+            <!-- Remember me -->
+            <div class="mb-4">
+              <label class="form-check-v2">
+                <input type="checkbox" id="loginRemember" />
+                <label for="loginRemember">Keep me signed in</label>
+              </label>
+            </div>
+
+            <button type="submit" class="auth-btn ripple-btn" id="loginSubmitBtn">
+              Sign In <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </form>
+
+          <p class="auth-footer-link">
+            Don't have an account? <a href="#" onclick="document.querySelector('[data-form=registerForm]').click()">Create one free →</a>
+          </p>
+        </div>
+
+        <!-- ══ REGISTER FORM ══ -->
+        <div class="auth-form" id="registerForm">
+          <h2 class="auth-title-v2">Create account ✨</h2>
+          <p class="auth-sub-v2">Join thousands of creators. Free forever.</p>
+
+          <!-- Google Sign-Up (rendered by GIS) -->
+          <div id="googleRegisterBtn" style="width:100%;margin-bottom:10px;display:flex;justify-content:center"></div>
+
+          <!-- GitHub Sign-Up -->
+          <button class="social-login-btn" type="button" onclick="AuthAPI.loginWithGitHub()">
+            <i class="fa-brands fa-github"></i> Sign up with GitHub
+          </button>
+
+          <div class="auth-divider-v2">or sign up with email</div>
+
+          <form id="registerFormEl" novalidate>
+            <!-- Full Name -->
+            <div class="form-group">
+              <label class="form-label-v2" for="regName">Full Name</label>
+              <div class="form-input-icon">
+                <i class="fa-solid fa-user"></i>
+                <input type="text" id="regName" class="form-input" placeholder="Alex Johnson" autocomplete="name" />
+              </div>
+              <div class="form-error" id="regNameErr"></div>
+            </div>
+
+            <!-- Email -->
+            <div class="form-group">
+              <label class="form-label-v2" for="regEmail">Email Address</label>
+              <div class="form-input-icon">
+                <i class="fa-solid fa-envelope"></i>
+                <input type="email" id="regEmail" class="form-input" placeholder="you@example.com" autocomplete="email" />
+              </div>
+              <div class="form-error" id="regEmailErr"></div>
+            </div>
+
+            <!-- Password -->
+            <div class="form-group">
+              <label class="form-label-v2" for="regPw">Password</label>
+              <div class="form-input-icon">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="regPw" class="form-input" placeholder="Min 8 characters" autocomplete="new-password" />
+                <button type="button" class="right-icon" data-toggle-pw="regPw" style="background:none;border:none;cursor:pointer;padding:0" title="Show/hide">
+                  <i class="fa-regular fa-eye" style="color:var(--text-subtle)"></i>
+                </button>
+              </div>
+              <div class="pw-strength">
+                <div class="pw-bars">
+                  <div class="pw-bar"></div>
+                  <div class="pw-bar"></div>
+                  <div class="pw-bar"></div>
+                  <div class="pw-bar"></div>
+                </div>
+                <span class="pw-label" id="pwStrengthLabel" style="font-size:0.74rem;color:var(--text-subtle)"></span>
+              </div>
+              <div class="form-error" id="regPwErr"></div>
+            </div>
+
+            <!-- Confirm Password -->
+            <div class="form-group">
+              <label class="form-label-v2" for="regCpw">Confirm Password</label>
+              <div class="form-input-icon">
+                <i class="fa-solid fa-lock"></i>
+                <input type="password" id="regCpw" class="form-input" placeholder="Repeat your password" autocomplete="new-password" />
+                <button type="button" class="right-icon" data-toggle-pw="regCpw" style="background:none;border:none;cursor:pointer;padding:0" title="Show/hide">
+                  <i class="fa-regular fa-eye" style="color:var(--text-subtle)"></i>
+                </button>
+              </div>
+              <div class="form-error" id="regCpwErr"></div>
+            </div>
+
+            <button type="submit" class="auth-btn ripple-btn" id="regSubmitBtn">
+              Create Account <i class="fa-solid fa-arrow-right"></i>
+            </button>
+          </form>
+
+          <p class="auth-footer-link">
+            Already have an account? <a href="#" onclick="document.querySelector('[data-form=loginForm]').click()">Sign in →</a>
+          </p>
+        </div>
+
+      </div>
+    </div>
+    <!-- / RIGHT SIDE -->
+
+  </div>
+  <!-- / auth-page -->
+
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="api.js"></script>
+  <script src="script.js"></script>
+  <script>
+    // ── Google GIS initialization ──────────────────────────
+    const GOOGLE_CLIENT_ID = '405197165296-k6paulvjkp7vpfi1pn0ndj45d4vv3nvo.apps.googleusercontent.com'; // ← Paste your Google Client ID here
+
+    window.addEventListener('load', () => {
+      // Handle GitHub OAuth callback
+      const githubResult = AuthAPI.handleGitHubCallback();
+      if (githubResult && githubResult.ok) {
+        Toast.success('Signed in with GitHub!', `Welcome, ${githubResult.user.full_name}`);
+        setTimeout(() => window.location.href = 'dashboard.html', 1000);
+        return;
+      }
+      if (githubResult && !githubResult.ok) {
+        Toast.error('GitHub Sign-In Failed', 'Please try again.');
+      }
+
+      // Check for password reset token
+      const params = new URLSearchParams(window.location.search);
+      if (params.get('reset')) {
+        openResetPasswordModal(params.get('reset'));
+      }
+
+      // Initialize Google Sign-In
+      if (GOOGLE_CLIENT_ID && window.google) {
+        GoogleAuth.init(GOOGLE_CLIENT_ID, (userData) => {
+          Toast.success('Signed in with Google!', `Welcome, ${userData.user.full_name}`);
+          setTimeout(() => window.location.href = 'dashboard.html', 900);
+        });
+        GoogleAuth.renderButton('googleLoginBtn',   'outline', 'large');
+        GoogleAuth.renderButton('googleRegisterBtn','outline', 'large');
+      } else {
+        // Fallback: show plain Google button if GIS not loaded
+        document.querySelectorAll('#googleLoginBtn, #googleRegisterBtn').forEach(el => {
+          el.innerHTML = '<button class="social-login-btn" type="button" onclick="Toast.info(\'Set GOOGLE_CLIENT_ID in auth.html to enable Google Sign-In\')" style="width:100%"><i class="fa-brands fa-google" style="color:#EA4335"></i> Continue with Google</button>';
+        });
+      }
+    });
+
+    // ── Reset password modal ────────────────────────────────
+    function openResetPasswordModal(token) {
+      // Reuse the auth form area to show reset form
+      const card = document.querySelector('.auth-card-v2');
+      if (!card) return;
+      card.innerHTML = `
+        <h2 class="auth-title-v2">Reset Password 🔑</h2>
+        <p class="auth-sub-v2">Enter your new password below.</p>
+        <div class="form-group">
+          <label class="form-label-v2">New Password</label>
+          <div class="form-input-icon">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="resetPw" class="form-input" placeholder="Min 8 characters" />
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label-v2">Confirm Password</label>
+          <div class="form-input-icon">
+            <i class="fa-solid fa-lock"></i>
+            <input type="password" id="resetCpw" class="form-input" placeholder="Repeat password" />
+          </div>
+        </div>
+        <button class="auth-btn" onclick="doReset('${token}')">
+          Reset Password <i class="fa-solid fa-arrow-right"></i>
+        </button>
+      `;
+    }
+
+    async function doReset(token) {
+      const pw  = document.getElementById('resetPw')?.value;
+      const cpw = document.getElementById('resetCpw')?.value;
+      if (!pw || pw.length < 8) { Toast.warning('Weak password', 'Min 8 characters required.'); return; }
+      if (pw !== cpw)           { Toast.warning('Mismatch', 'Passwords do not match.'); return; }
+      const res = await AuthAPI.resetPassword(token, pw);
+      if (res.ok) {
+        Toast.success('Password reset!', 'Please sign in.');
+        setTimeout(() => window.location.href = 'auth.html', 1200);
+      } else {
+        Toast.error('Reset failed', res.data.message);
+      }
+    }
+  </script>
+</body>
+</html>
