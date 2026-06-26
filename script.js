@@ -423,7 +423,13 @@ const Sidebar = {
     const user = NV.getUser();
     document.querySelectorAll('[data-user-name]').forEach(el => el.textContent = user.name);
     document.querySelectorAll('[data-user-email]').forEach(el => el.textContent = user.email);
-    document.querySelectorAll('[data-user-avatar]').forEach(el => el.textContent = user.avatar || 'U');
+    document.querySelectorAll('[data-user-avatar]').forEach(el => {
+      if (user.avatar && user.avatar.startsWith('http')) {
+        el.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" />`;
+      } else {
+        el.textContent = user.avatar || 'U';
+      }
+    });
   },
 
   updateBadge() {
@@ -1228,7 +1234,13 @@ function initSettings() {
   const settingsAvatar = document.getElementById('settingsAvatarText');
   if (settingsName)   settingsName.value  = user.name;
   if (settingsEmail)  settingsEmail.value = user.email;
-  if (settingsAvatar) settingsAvatar.textContent = user.avatar || 'U';
+  if (settingsAvatar) {
+    if (user.avatar && user.avatar.startsWith('http')) {
+      settingsAvatar.innerHTML = `<img src="${user.avatar}" style="width:100%;height:100%;object-fit:cover;border-radius:inherit;" />`;
+    } else {
+      settingsAvatar.textContent = user.avatar || 'U';
+    }
+  }
 
   // Settings nav tabs
   document.querySelectorAll('.settings-nav-item').forEach(item => {
