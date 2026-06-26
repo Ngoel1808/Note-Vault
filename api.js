@@ -5,7 +5,7 @@
 
 // Automatically switch between Local and Live backend URLs
 const isLocal = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
-const LIVE_BACKEND_URL = 'https://note-vault-backend.onrender.com/api'; // We will update this later!
+const LIVE_BACKEND_URL = 'https://note-vault-cukr.onrender.com/api'; 
 const API_BASE = isLocal ? 'http://localhost:5000/api' : LIVE_BACKEND_URL;
 
 /* ────────────────────────────────────────────────────────────
