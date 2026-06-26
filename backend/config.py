@@ -23,11 +23,23 @@ class Config:
         _user = os.environ.get("DB_USER", "root")
         _pw   = os.environ.get("DB_PASSWORD", "")
         _db_url = f"mysql+pymysql://{_user}:{_pw}@{_host}:{_port}/{_name}"
+        
+    # PyMySQL does not support ssl_mode in the URL query string
+    if _db_url and "?ssl_mode=REQUIRED" in _db_url:
+        _db_url = _db_url.replace("?ssl_mode=REQUIRED", "")
+    elif _db_url and "?ssl-mode=REQUIRED" in _db_url:
+        _db_url = _db_url.replace("?ssl-mode=REQUIRED", "")
+
     SQLALCHEMY_DATABASE_URI = _db_url
     SQLALCHEMY_TRACK_MODIFICATIONS = False
+    
+    # Aiven requires SSL, which we enable via connect_args for PyMySQL
+    _connect_args = {"ssl": {}} if _db_url and "aivencloud" in _db_url else {}
+    
     SQLALCHEMY_ENGINE_OPTIONS = {
         "pool_recycle": 300,
         "pool_pre_ping": True,
+        "connect_args": _connect_args,
     }
 
     # ── JWT ──────────────────────────────────────────────────
