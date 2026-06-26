@@ -81,7 +81,7 @@ const AuthAPI = {
 
   // GitHub OAuth: just redirect — backend handles the flow
   loginWithGitHub() {
-    window.location.href = `http://localhost:5000/api/auth/github`;
+    window.location.href = `${API_BASE}/auth/github`;
   },
 
   // Called after GitHub callback redirect (picks token from URL params)
