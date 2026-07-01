@@ -892,11 +892,10 @@ function initAuth() {
   }
 
   // Login
-  document.getElementById('loginFormEl')?.addEventListener('submit', e => {
+  document.getElementById('loginFormEl')?.addEventListener('submit', async e => {
     e.preventDefault();
     const email = document.getElementById('loginEmail').value.trim();
     const pw    = document.getElementById('loginPw').value;
-    const remember = document.getElementById('loginRemember')?.checked;
 
     let ok = true;
     if (!Valid.email(email)) { showAuthError('loginEmailErr', 'Enter a valid email address'); ok = false; } else hideAuthError('loginEmailErr');
@@ -906,19 +905,18 @@ function initAuth() {
     const btn = document.getElementById('loginSubmitBtn');
     btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Signing in...';
 
-    // Retrieve registered user
-    const savedUser = (() => { try { return JSON.parse(localStorage.getItem(NV.KEYS.USER) || '{}'); } catch { return {}; } })();
-    const displayName = savedUser.name || email.split('@')[0];
-
-    setTimeout(() => {
-      NV.login(displayName, email, pw, remember);
-      Toast.success('Welcome back!', `Signed in as ${email}`);
+    const res = await AuthAPI.login(email, pw);
+    if (res.ok) {
+      Toast.success('Welcome back!', 'Redirecting...');
       setTimeout(() => window.location.href = 'dashboard.html', 800);
-    }, 900);
+    } else {
+      Toast.error('Login failed', res.data?.message || 'Invalid credentials');
+      btn.disabled = false; btn.innerHTML = 'Sign In <i class="fa-solid fa-arrow-right"></i>';
+    }
   });
 
   // Register
-  document.getElementById('registerFormEl')?.addEventListener('submit', e => {
+  document.getElementById('registerFormEl')?.addEventListener('submit', async e => {
     e.preventDefault();
     const name  = document.getElementById('regName').value.trim();
     const email = document.getElementById('regEmail').value.trim();
@@ -935,15 +933,14 @@ function initAuth() {
     const btn = document.getElementById('regSubmitBtn');
     btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Creating account...';
 
-    setTimeout(() => {
-      NV.register(name, email);
-      Toast.success('Account created!', 'Please sign in to continue.');
-      setTimeout(() => {
-        document.querySelector('[data-form="loginForm"]')?.click();
-        document.getElementById('loginEmail').value = email;
-        btn.disabled = false; btn.innerHTML = 'Create Account <i class="fa-solid fa-arrow-right"></i>';
-      }, 900);
-    }, 1000);
+    const res = await AuthAPI.register(name, email, pw);
+    if (res.ok) {
+      Toast.success('Account created!', 'Redirecting to dashboard...');
+      setTimeout(() => window.location.href = 'dashboard.html', 800);
+    } else {
+      Toast.error('Registration failed', res.data?.message || 'Error creating account');
+      btn.disabled = false; btn.innerHTML = 'Create Account <i class="fa-solid fa-arrow-right"></i>';
+    }
   });
 
   // Password strength
